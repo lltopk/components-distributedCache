@@ -74,7 +74,7 @@ Program arguments:--server.port=9090
 ## 频道自动装配
 Redis 的 Pub/Sub：频道不需要提前创建, 发布消息也不会创建频道
 
-因此配置要比mq简单的多, 只需要给订阅者指定监听的频道即可, redis会自动管理
+因此配置要比mq简单的多, 只需要给订阅者指定监听的频道即可, 一旦有客户端在监听, redis就会自动管理并创建频道
 
 启动服务之后, 可以在redis-cli控制台执行pubsub channels验证当前自动生成的所有订阅者频道
 ```java
