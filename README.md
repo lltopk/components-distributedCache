@@ -109,7 +109,7 @@ public class RedisPubSubConfig {
 
 抽象类[AbstractGuavaCache.java](distributeLocalCache/src/main/java/org/lltopk/distributeLocalCache/cache/AbstractGuavaCache.java)实现上述三个接口
 
-核心的业务逻辑有以下几个
+核心的业务逻辑有以下几个, 下文**客户端**代指具备redis监听能力的客户端节点, 也就是我们的业务节点
 - 每个客户端生成默认的节点标识instanceId, 如UUID.randomUUID().toString()
 - 当有客户端发布频道消息的时候, 各大服务节点监听消息, 清空各自的本地缓存, 但要注意根据instanceId跳过自己的节点
 - 当有客户端更新本地缓存的时候, 触发发布频道消息, 用于同步各大节点本地缓存一致性
@@ -160,7 +160,7 @@ PUBLISH <channel> <message>命令用于发布消息, 其返回值是可以接收
 ```
 
 > 在Linux命令文档/帮助的语法说明里 
-> 方括号 [ ]：表示可选项。出现在方括号里的内容可以不写。 例：command [options] <file> 表示 options 是可选的。 
+> 方括号 [ ]：表示可选项。出现在方括号里的内容可以不写。 例：command [op tions] <file> 表示 options 是可选的。 
 > 尖括号 < >：表示必填的占位符，需要你用实际值替换，括号本身不输入。 例：cp <源文件> <目标路径> 实际输入应是 cp src.txt /tmp/
 
 ## 测试验证
