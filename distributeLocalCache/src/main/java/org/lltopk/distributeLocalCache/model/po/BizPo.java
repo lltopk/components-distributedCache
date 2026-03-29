@@ -1,4 +1,4 @@
-package org.lltopk.distributeLocalCache.entity;
+package org.lltopk.distributeLocalCache.model.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

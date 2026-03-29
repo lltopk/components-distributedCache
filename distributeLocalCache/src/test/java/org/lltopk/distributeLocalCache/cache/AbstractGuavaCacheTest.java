@@ -4,8 +4,9 @@ import com.google.common.cache.CacheStats;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.lltopk.distributeLocalCache.biz.BizListVCache;
+import org.lltopk.distributeLocalCache.biz.BizMapVCache;
 import org.lltopk.distributeLocalCache.biz.BizStringVCache;
-import org.lltopk.distributeLocalCache.entity.BizPo;
+import org.lltopk.distributeLocalCache.model.po.BizPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -22,6 +23,9 @@ public class AbstractGuavaCacheTest {
 
     @Autowired
     BizListVCache bizListVCache;
+
+    @Autowired
+    private BizMapVCache bizMapVCache;
 
     @Test
     public void testStringCacheOperations() {
@@ -56,5 +60,10 @@ public class AbstractGuavaCacheTest {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    public void testMapCacheOperations() {
+        log.info("remained bizMapVCacheEntries {}", bizMapVCache.entries());
     }
 }

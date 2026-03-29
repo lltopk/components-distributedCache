@@ -1,4 +1,4 @@
-package org.lltopk.distributeLocalCache.mock;
+package org.lltopk.distributeLocalCache.init;
 
 import lombok.extern.slf4j.Slf4j;
 import org.lltopk.distributeLocalCache.biz.BizListVCache;
@@ -26,9 +26,10 @@ public class LocalCacheGenerator implements SmartInitializingSingleton {
     public void afterSingletonsInstantiated() {
         log.info("LocalCacheGenerator start...");
         try {
-            bizStringVCache.get("key1");
-            bizStringVCache.get("key2");
+            bizStringVCache.get("configKey1");
+            bizStringVCache.get("configKey2");
             log.info("bizStringCache entries {}", bizStringVCache.entries());
+
             bizListVCache.get("key1");
             bizListVCache.get("key2");
             log.info("bizListCache entries {}", bizListVCache.entries());

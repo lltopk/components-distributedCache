@@ -1,7 +1,6 @@
-package org.lltopk.distributeLocalCache.mock;
+package org.lltopk.distributeLocalCache.init;
 
 import lombok.extern.slf4j.Slf4j;
-import org.lltopk.distributeLocalCache.biz.BizStringVCache;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -11,18 +10,16 @@ import java.util.Set;
 
 @Component
 @Slf4j
-public class TestConnection implements SmartInitializingSingleton {
+public class TestRedisConnection implements SmartInitializingSingleton {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
-    @Autowired
-    private BizStringVCache bizStringVCache;
 
     @Override
     public void afterSingletonsInstantiated() {
-        log.info("TestConnection start...");
+        log.info("TestRedisConnection start...");
         Set<String> keys = stringRedisTemplate.keys("*");
         for (String key : keys) {
-            log.info("test key {} value {}",key,stringRedisTemplate.opsForValue().get(key));
+            log.info("TestRedisConnection key {} value {}",key,stringRedisTemplate.opsForValue().get(key));
         }
         log.info("TestConnection success...");
     }

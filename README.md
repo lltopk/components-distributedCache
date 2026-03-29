@@ -1,21 +1,17 @@
+## 一. 分布式缓存
+
+### 模拟分布式节点
+1. 启动主应用默认8080端口, 这是第一个主应用
+2. 右键配置主应用, 开启Allow Multi Instance,
+3. 右键配置主应用, 添加Program arguments参数, 修改应用2端口号为9090
+
+
+## 二. 分布式本地缓存
 本项目利用redis的消息发布订阅模式, 实现了分布式的本地缓存的一致性
 
 由于不需要redis缓存, 也就节省了每次网络请求的开销, 因此本地缓存的性能是很高的
 
-## 连接性验证
-1. 运行主应用, [TestConnection.java](distributeLocalCache/src/main/java/org/lltopk/distributeLocalCache/mock/TestConnection.java)会执行缓存测试
-2. 单元测试: [AbstractGuavaCacheTest.java](distributeLocalCache/src/test/java/org/lltopk/distributeLocalCache/cache/AbstractGuavaCacheTest.java)
-
-## 模拟分布式节点
-模拟两个分布式节点, 主应用默认端口号8080, IDEA复制主应用, 修改应用2端口号为9090
-
-```shell
-Program arguments:--server.port=9090
-```
-
-![img.png](img.png)
-
-## 本地缓存结构
+### 本地缓存结构
 使用guava, 缓存默认懒加载, 当get不到的时候, 执行回调加载数据库缓存
 ```java
     // LoadingCache methods
@@ -71,7 +67,7 @@ Program arguments:--server.port=9090
 
 
 
-## 频道自动装配
+### 频道自动装配
 Redis 的 Pub/Sub：频道不需要提前创建, 发布消息也不会创建频道
 
 因此配置要比mq简单的多, 只需要给订阅者指定监听的频道即可, 一旦有客户端在监听, redis就会自动管理并创建频道
@@ -99,7 +95,7 @@ public class RedisPubSubConfig {
 }
 ```
 
-## 业务逻辑
+### 业务逻辑
 根据单一职责, 设计三个接口:
 - [ILocalCacheAccess.java](distributeLocalCache/src/main/java/org/lltopk/distributeLocalCache/cache/ILocalCacheAccess.java)
 - [ILocalCachePublisher.java](distributeLocalCache/src/main/java/org/lltopk/distributeLocalCache/cache/ILocalCachePublisher.java)
@@ -109,10 +105,9 @@ public class RedisPubSubConfig {
 
 抽象类[AbstractGuavaCache.java](distributeLocalCache/src/main/java/org/lltopk/distributeLocalCache/cache/AbstractGuavaCache.java)实现上述三个接口
 
-核心的业务逻辑有以下几个, 下文**客户端**代指具备redis监听能力的客户端节点, 也就是我们的业务节点
-- 每个客户端生成默认的节点标识instanceId, 如UUID.randomUUID().toString()
-- 当有客户端发布频道消息的时候, 各大服务节点监听消息, 清空各自的本地缓存, 但要注意根据instanceId跳过自己的节点
-- 当有客户端更新本地缓存的时候, 触发发布频道消息, 用于同步各大节点本地缓存一致性
+核心的业务逻辑以下, 下文**客户端**代指具备redis监听能力的客户端节点, 也就是我们的业务节点
+
+当有客户端更新数据库的时候, 触发发布频道消息, 各大服务节点监听消息, 清空各自的本地缓存, 用于同步各大节点本地缓存一致性
 
 ## redis原生命令
 进入redis容器
@@ -163,6 +158,9 @@ PUBLISH <channel> <message>命令用于发布消息, 其返回值是可以接收
 > 方括号 [ ]：表示可选项。出现在方括号里的内容可以不写。 例：command [op tions] <file> 表示 options 是可选的。 
 > 尖括号 < >：表示必填的占位符，需要你用实际值替换，括号本身不输入。 例：cp <源文件> <目标路径> 实际输入应是 cp src.txt /tmp/
 
-## 测试验证
+### 测试验证
+项目启动初始化数据库数据到各个节点的缓存
 
-见[controller](distributeLocalCache/src/main/java/org/lltopk/distributeLocalCache/controller)
+请求更新数据库接口, 会遵循Cache Aside原则, 先更新数据库, 再发送广播清空各大节点本地缓存
+
+请求查看数据库接口, 此时缓存为空, 自然会查数据库, 然后更新数据到本地缓存

@@ -3,7 +3,7 @@ package org.lltopk.distributeLocalCache.biz;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.lltopk.distributeLocalCache.cache.AbstractGuavaCache;
-import org.lltopk.distributeLocalCache.entity.BizPo;
+import org.lltopk.distributeLocalCache.model.po.BizPo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

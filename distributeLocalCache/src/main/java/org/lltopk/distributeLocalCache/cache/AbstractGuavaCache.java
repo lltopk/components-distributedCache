@@ -83,7 +83,7 @@ public abstract class AbstractGuavaCache<K, V> implements ILocalCacheAccess<K, V
     @Override
     public void setCache(K key, V value) {
         cache.put(key, value);
-        sync(topic(),(String)key);
+        log.info("entries after set {}",entries());
     }
 
     @Override
@@ -114,6 +114,12 @@ public abstract class AbstractGuavaCache<K, V> implements ILocalCacheAccess<K, V
 
     abstract protected String name();
 
+    /**
+     * 缓存没命中, 自然要去查数据库
+     * @param k
+     * @return
+     * @throws Exception
+     */
     abstract protected V loadIfNot(K k) throws Exception;
     /**
      * 获取Guava Cache的统计信息
@@ -141,6 +147,7 @@ public abstract class AbstractGuavaCache<K, V> implements ILocalCacheAccess<K, V
      */
     @Override
     public void onMessage(Message message, @Nullable byte[] pattern){
+        log.info("entries before listener{}", entries());
 
         String patternStr = new String(pattern);
         log.info("patternStr {}",patternStr);
@@ -158,13 +165,13 @@ public abstract class AbstractGuavaCache<K, V> implements ILocalCacheAccess<K, V
         String[] parts = payload.split("\\|");
         senderId = parts[0];
         key = parts[1];
-
-        // 如果是当前节点自己发出的消息，忽略
-        CacheFlushPublisher publisher = getCacheFlushPublisher();
-        if (Objects.nonNull(senderId) && StringUtils.equals(senderId, publisher.getInstanceId())) {
-            log.info("skip self message {}", payload);
-            return;
-        }
+//
+//        // 如果是当前节点自己发出的消息，忽略
+//        CacheFlushPublisher publisher = getCacheFlushPublisher();
+//        if (Objects.nonNull(senderId) && StringUtils.equals(senderId, publisher.getInstanceId())) {
+//            log.info("skip self message {}", payload);
+//            return;
+//        }
 
         if (StringUtils.equals(key,"refresh")) {
             //清空所有缓存
@@ -175,11 +182,7 @@ public abstract class AbstractGuavaCache<K, V> implements ILocalCacheAccess<K, V
             // 否则尝试移除特定key
             removeKey((K) key);
         }
-    }
-
-    @Override
-    public Long sync(String channelTopic, String key){
-        return getCacheFlushPublisher().publishFlushByTopicAndKey(channelTopic,key);
+        log.info("entries after listener{}", entries());
     }
 
     @Override

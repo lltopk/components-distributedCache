@@ -31,6 +31,8 @@
 <!--        <redisson.version>3.23.0</redisson.version>-->
         <guava.version>30.0-jre</guava.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+		<mysql.version>5.1.48</mysql.version>
+		<mybatis-plus.version>3.5.12</mybatis-plus.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -75,6 +77,16 @@
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
         </dependency>
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+			<version>${mybatis-plus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version> <!-- 请检查是否有更新版本 -->
+		</dependency>
 	</dependencies>
 
 	<build>
